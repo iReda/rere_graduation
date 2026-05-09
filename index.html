@@ -3,21 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Minimalist Mobile Landing Page</title>
+    <title>Digital Flower Bloom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <!-- Add Dancing Script for the letter -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
     <div class="background-container"></div>
     
     <main class="content-wrapper">
-        <div class="envelope-container">
+        <!-- The flower container will hold the 40 generated flowers -->
+        <div id="flower-container"></div>
+
+        <!-- The initial envelope -->
+        <div class="envelope-container" id="envelope">
             <div class="glow"></div>
-            <img src="assets/watercolor_envelope_transparent.png" alt="Vintage watercolor envelope with pink flowers and a purple wax seal" class="envelope-image">
+            <img src="assets/watercolor_envelope_transparent.png" alt="Vintage watercolor envelope" class="envelope-image">
+            <p class="tap-text">Tap to open</p>
         </div>
-        <p class="tap-text">Tap to open</p>
+
+        <!-- The letter card reveal -->
+        <div id="letter-card" class="hidden">
+            <div class="polaroid-column">
+                <!-- Using placeholder images for polaroids -->
+                <div class="polaroid"><div class="polaroid-img" style="background-color: #e0d5c1;"></div></div>
+                <div class="polaroid"><div class="polaroid-img" style="background-color: #d1bda1;"></div></div>
+                <div class="polaroid"><div class="polaroid-img" style="background-color: #c2a886;"></div></div>
+            </div>
+            <div class="letter-content">
+                <div class="paperclip">📎</div>
+                <p class="handwritten-text">
+                    My Dearest,<br><br>
+                    Just as these flowers bloom, my thoughts always turn to you. I hope this digital garden brings a smile to your face today and always.<br><br>
+                    With love,
+                </p>
+            </div>
+        </div>
     </main>
 
     <script src="script.js"></script>

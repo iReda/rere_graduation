@@ -1,6 +1,6 @@
 :root {
     --terracotta: #c96b58;
-    --terracotta-dark: #a85241;
+    --paper-bg: #fdfbf7;
 }
 
 * {
@@ -13,7 +13,7 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #fcf9f2; /* Fallback cream color */
+    background-color: #fcf9f2;
     font-family: 'Playfair Display', serif;
 }
 
@@ -23,7 +23,6 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Use the generated parchment texture */
     background-image: url('assets/cream_parchment.png');
     background-size: cover;
     background-position: center;
@@ -31,14 +30,10 @@ body, html {
     z-index: 1;
 }
 
-/* Cinematic lighting vignette */
 .background-container::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: radial-gradient(circle at center, transparent 30%, rgba(160, 140, 120, 0.25) 100%);
     pointer-events: none;
 }
@@ -49,94 +44,168 @@ body, html {
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 40px; /* Space between envelope and text */
 }
 
+/* FLOWER CONTAINER (Z-Index: 5, behind letter, above bg) */
+#flower-container {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 5;
+    pointer-events: none; /* Let clicks pass through to background */
+    /* Parallax container */
+    transform-style: preserve-3d;
+}
+
+.flower-particle {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.15));
+    /* We will use GSAP to set their left/top and transforms */
+    opacity: 0;
+    transform: scale(0);
+}
+
+/* ENVELOPE (Z-Index: 10) */
 .envelope-container {
-    position: relative;
+    position: absolute;
+    z-index: 10;
     cursor: pointer;
-    /* Soft floating animation */
-    animation: float 6s ease-in-out infinite;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    gap: 20px;
+    transition: transform 0.3s ease;
 }
 
-/* Subtle glow behind the envelope for cinematic effect */
+.envelope-container:hover {
+    transform: scale(1.05);
+}
+
 .glow {
     position: absolute;
-    width: 150%;
-    height: 150%;
+    width: 150%; height: 150%;
     background: radial-gradient(circle, rgba(255,252,245,0.7) 0%, rgba(255,255,255,0) 70%);
     border-radius: 50%;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.8;
 }
 
 .envelope-image {
     max-width: 250px;
     height: auto;
-    /* Soft, realistic drop shadow */
     filter: drop-shadow(0px 15px 20px rgba(100, 80, 70, 0.3));
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
-}
-
-.envelope-container:hover .envelope-image,
-.envelope-container:focus .envelope-image {
-    transform: scale(1.05) translateY(-5px);
-    filter: drop-shadow(0px 25px 30px rgba(100, 80, 70, 0.4));
 }
 
 .tap-text {
     font-family: 'Parisienne', cursive;
     font-size: 2.8rem;
     color: var(--terracotta);
-    /* Delicate text shadow to enhance readability */
-    text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.8), 0px 4px 10px rgba(200, 100, 80, 0.15);
-    letter-spacing: 1px;
-    cursor: pointer;
-    animation: pulse 3s ease-in-out infinite;
-    transition: color 0.3s ease;
-}
-
-.tap-text:hover {
-    color: var(--terracotta-dark);
-}
-
-/* Animations */
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-15px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
+    text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.8);
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0%, 100% {
-        opacity: 0.8;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.03);
-    }
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
 }
 
-/* Responsive adjustments */
-@media (max-width: 480px) {
-    .envelope-image {
-        max-width: 200px;
+/* LETTER CARD (Z-Index: 20) */
+#letter-card {
+    position: absolute;
+    z-index: 20;
+    background-color: var(--paper-bg);
+    /* Paper texture via CSS gradient noise trick */
+    background-image: url('assets/cream_parchment.png');
+    background-size: cover;
+    background-blend-mode: overlay;
+    
+    width: 90%;
+    max-width: 600px;
+    min-height: 350px;
+    border-radius: 4px;
+    box-shadow: 0px 25px 50px rgba(0,0,0,0.2), 0px 5px 15px rgba(0,0,0,0.1);
+    
+    display: flex;
+    padding: 30px;
+    gap: 30px;
+    
+    /* GSAP will animate this from hidden state */
+    opacity: 0;
+    transform: translateY(100px);
+    pointer-events: none; /* until revealed */
+}
+
+#letter-card.visible {
+    pointer-events: auto;
+}
+
+.polaroid-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100px;
+}
+
+.polaroid {
+    background: white;
+    padding: 6px 6px 15px 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transform: rotate(-3deg);
+    transition: transform 0.3s ease;
+}
+.polaroid:nth-child(even) {
+    transform: rotate(4deg);
+}
+.polaroid:hover {
+    transform: scale(1.1) rotate(0deg);
+    z-index: 2;
+}
+
+.polaroid-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background-size: cover;
+    background-position: center;
+}
+
+.letter-content {
+    flex: 1;
+    position: relative;
+    padding-top: 10px;
+}
+
+.paperclip {
+    position: absolute;
+    top: -45px;
+    left: -15px;
+    font-size: 2rem;
+    transform: rotate(-15deg);
+    opacity: 0.7;
+}
+
+.handwritten-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    line-height: 1.4;
+    color: #2c241b;
+}
+
+@media (max-width: 600px) {
+    #letter-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
     }
-    .tap-text {
-        font-size: 2.2rem;
+    .polaroid-column {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+    }
+    .polaroid {
+        width: 30%;
     }
 }
