@@ -172,12 +172,57 @@ body, html {
     padding-bottom: max(40px, env(safe-area-inset-bottom));
 }
 
-/* Empty vertical band between bouquet and letter (scroll to read) */
+/* Space + scroll hint between bouquet and letter */
 .finale-scroll-spacer {
     width: 100%;
-    min-height: clamp(160px, 36vh, 340px);
+    min-height: clamp(220px, 48vh, 480px);
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 0 20px;
     pointer-events: none;
+}
+
+.finale-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 248, 242, 0.92);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+    animation: finale-scroll-bob 1.45s ease-in-out infinite;
+}
+
+.finale-scroll-hint-label {
+    font-family: 'Parisienne', cursive;
+    font-size: clamp(1.15rem, 3.2vw, 1.55rem);
+    letter-spacing: 0.02em;
+    opacity: 0.95;
+}
+
+.finale-scroll-chevron {
+    display: block;
+    opacity: 0.95;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+@keyframes finale-scroll-bob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(12px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .finale-scroll-hint {
+        animation: none;
+    }
 }
 
 /* Letter block: message on top, three polaroids in a row below */
@@ -335,7 +380,7 @@ body, html {
 
 @media (max-width: 720px) {
     .finale-scroll-spacer {
-        min-height: clamp(140px, 34vh, 300px);
+        min-height: clamp(200px, 46vh, 420px);
     }
 
     .finale-polaroid {
