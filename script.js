@@ -3,8 +3,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const flowerContainer = document.getElementById('flower-container');
     const letterCard = document.getElementById('letter-card');
 
-    // Using the single generated cluster, but we will use CSS hue-rotate to make 5 variations
-    const flowerSrc = 'assets/5aa8e2757603fc558cffbf2e.png';
+    // Array of multiple flower assets
+    const flowerAssets = [
+        'assets/040fc6f9d008548320fa2fd7b8f9b6f0.png',
+        'assets/37cb415660c2b476d5cdfad297dc27b3.png',
+        'assets/429fad63ff677d55864f29a38ec43073.png',
+        'assets/59d0d0eb0b757debb24f34c204e4a69e.png',
+        'assets/5aa8e22e7603fc558cffbf27.png',
+        'assets/5aa8e2377603fc558cffbf28.png',
+        'assets/5aa8e24d7603fc558cffbf2a.png',
+        'assets/5aa8e2557603fc558cffbf2b.png',
+        'assets/5aa8e2757603fc558cffbf2e.png',
+        'assets/5da23fecb6645f830efed7ddd0e697f6.png',
+        'assets/78ef85f5962f0b8c08e1a8664cfca025.png',
+        'assets/98a8c2e9fd32a762dffb3b2667ef15b9.png',
+        'assets/e4c8e4c59fba1f021ac630833498c4de.png',
+        'assets/f1af24c2e698afb0d4dcb6029dd5b60e.png'
+    ];
     const numFlowers = 500;
 
     let isOpened = false;
@@ -34,17 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (let i = 0; i < numFlowers; i++) {
             const img = document.createElement('img');
-            img.src = flowerSrc;
+            // Pick a random flower from the array
+            img.src = flowerAssets[Math.floor(Math.random() * flowerAssets.length)];
             img.className = 'flower-particle';
 
-            // Randomize hue-rotate to simulate different flower types (sunflower, pink peony, etc)
-            // 0=original, 45=greener/yellower, -45=redder/pinker, 180=blue/purple
-            const hueVariations = [0, 20, -30, -60, 150];
-            const randomHue = hueVariations[Math.floor(Math.random() * hueVariations.length)];
-            const randomSaturate = random(0.8, 1.5);
-
-            // Combine with the drop-shadow from CSS
-            img.style.filter = `hue-rotate(${randomHue}deg) saturate(${randomSaturate}) drop-shadow(0px 8px 12px rgba(0,0,0,0.15))`;
+            // Keep the drop-shadow but remove hue/saturate filters
+            img.style.filter = `drop-shadow(0px 8px 12px rgba(0,0,0,0.15))`;
 
             flowerContainer.appendChild(img);
             flowerElements.push(img);
