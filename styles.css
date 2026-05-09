@@ -2,6 +2,8 @@
     --terracotta: #c96b58;
     --paper-bg: #fdfbf7;
     --finale-dim: rgba(18, 10, 22, 0.82);
+    --font-display: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+    --font-letter: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
 }
 
 * {
@@ -16,7 +18,7 @@ body, html {
     min-height: 100dvh;
     overflow: hidden;
     background-color: #fcf9f2;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-display);
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
 }
 
@@ -107,8 +109,11 @@ body, html {
 }
 
 .tap-text {
-    font-family: 'Parisienne', cursive;
-    font-size: clamp(1.65rem, 5.5vw + 0.5rem, 2.8rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.35rem, 4.2vw + 0.4rem, 2.15rem);
+    letter-spacing: 0.04em;
     color: var(--terracotta);
     text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.8);
     animation: pulse 2s infinite;
@@ -197,9 +202,11 @@ body, html {
 }
 
 .finale-scroll-hint-label {
-    font-family: 'Parisienne', cursive;
-    font-size: clamp(1.15rem, 3.2vw, 1.55rem);
-    letter-spacing: 0.02em;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+    letter-spacing: 0.06em;
     opacity: 0.95;
 }
 
@@ -339,11 +346,14 @@ body, html {
 }
 
 .finale-meta {
-    font-family: 'Great Vibes', cursive;
-    font-size: clamp(1.15rem, 2.8vw + 0.4rem, 1.55rem);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1rem, 2.4vw + 0.35rem, 1.35rem);
     color: #6b5b4f;
     text-align: right;
-    line-height: 1.35;
+    line-height: 1.45;
+    letter-spacing: 0.03em;
     margin-bottom: 10px;
     opacity: 0.95;
 }
@@ -359,9 +369,12 @@ body, html {
 }
 
 .finale-handwritten {
-    font-family: 'Dancing Script', cursive;
-    font-size: clamp(1.15rem, 2.6vw + 0.55rem, 1.85rem);
-    line-height: 1.45;
+    font-family: var(--font-letter);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.2rem, 2.8vw + 0.45rem, 1.65rem);
+    line-height: 1.65;
+    letter-spacing: 0.015em;
     color: #2c241b;
 }
 
