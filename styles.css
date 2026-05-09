@@ -172,10 +172,10 @@ body, html {
     padding-bottom: max(40px, env(safe-area-inset-bottom));
 }
 
-/* Empty vertical band: user scrolls a little before the letter + photos */
+/* Empty vertical band between bouquet and letter (scroll to read) */
 .finale-scroll-spacer {
     width: 100%;
-    min-height: clamp(100px, 24vh, 220px);
+    min-height: clamp(160px, 36vh, 340px);
     flex-shrink: 0;
     pointer-events: none;
 }
@@ -335,7 +335,7 @@ body, html {
 
 @media (max-width: 720px) {
     .finale-scroll-spacer {
-        min-height: clamp(88px, 22vh, 200px);
+        min-height: clamp(140px, 34vh, 300px);
     }
 
     .finale-polaroid {
@@ -354,6 +354,7 @@ body, html {
     align-items: center;
     justify-content: center;
     padding-top: 4px;
+    margin-bottom: clamp(8px, 2vh, 24px);
 }
 
 .finale-bouquet-img {
