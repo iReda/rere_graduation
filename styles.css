@@ -1,6 +1,7 @@
 :root {
     --terracotta: #c96b58;
     --paper-bg: #fdfbf7;
+    --finale-dim: rgba(18, 10, 22, 0.82);
 }
 
 * {
@@ -11,10 +12,12 @@
 
 body, html {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    min-height: 100dvh;
     overflow: hidden;
     background-color: #fcf9f2;
     font-family: 'Playfair Display', serif;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
 }
 
 .background-container {
@@ -28,6 +31,8 @@ body, html {
     background-position: center;
     background-repeat: no-repeat;
     z-index: 1;
+    filter: brightness(1);
+    transition: filter 0.1s linear;
 }
 
 .background-container::after {
@@ -42,34 +47,32 @@ body, html {
     position: relative;
     z-index: 10;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* FLOWER CONTAINER (Z-Index: 5, behind letter, above bg) */
 #flower-container {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 5;
-    pointer-events: none; /* Let clicks pass through to background */
-    /* Parallax container */
+    pointer-events: none;
     transform-style: preserve-3d;
 }
 
 .flower-particle {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
     filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.15));
-    /* We will use GSAP to set their left/top and transforms */
+    pointer-events: none;
     opacity: 0;
-    transform: scale(0);
+    transform: translateZ(0);
 }
 
-/* ENVELOPE (Z-Index: 10) */
 .envelope-container {
     position: absolute;
     z-index: 10;
@@ -81,8 +84,10 @@ body, html {
     transition: transform 0.3s ease;
 }
 
-.envelope-container:hover {
-    transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+    .envelope-container:hover {
+        transform: scale(1.05);
+    }
 }
 
 .glow {
@@ -95,6 +100,7 @@ body, html {
 }
 
 .envelope-image {
+    width: min(72vw, 250px);
     max-width: 250px;
     height: auto;
     filter: drop-shadow(0px 15px 20px rgba(100, 80, 70, 0.3));
@@ -102,7 +108,7 @@ body, html {
 
 .tap-text {
     font-family: 'Parisienne', cursive;
-    font-size: 2.8rem;
+    font-size: clamp(1.65rem, 5.5vw + 0.5rem, 2.8rem);
     color: var(--terracotta);
     text-shadow: 0px 2px 4px rgba(255, 255, 255, 0.8);
     animation: pulse 2s infinite;
@@ -113,99 +119,272 @@ body, html {
     50% { opacity: 1; transform: scale(1.05); }
 }
 
-/* LETTER CARD (Z-Index: 20) */
-#letter-card {
-    position: absolute;
-    z-index: 20;
-    background-color: var(--paper-bg);
-    /* Paper texture via CSS gradient noise trick */
-    background-image: url('assets/cream_parchment.png');
-    background-size: cover;
-    background-blend-mode: overlay;
-    
-    width: 90%;
-    max-width: 600px;
-    min-height: 350px;
-    border-radius: 4px;
-    box-shadow: 0px 25px 50px rgba(0,0,0,0.2), 0px 5px 15px rgba(0,0,0,0.1);
-    
-    display: flex;
-    padding: 30px;
-    gap: 30px;
-    
-    /* GSAP will animate this from hidden state */
-    opacity: 0;
-    transform: translateY(100px);
-    pointer-events: none; /* until revealed */
+/* ---------- Finale: dim + bouquet + stamp message ---------- */
+
+.finale-root {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
 }
 
-#letter-card.visible {
+.finale-root.is-on {
     pointer-events: auto;
 }
 
-.polaroid-column {
+.finale-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--finale-dim);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+}
+
+.finale-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    opacity: 0;
+    pointer-events: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.finale-root.is-on .finale-scene {
+    pointer-events: auto;
+}
+
+.finale-layout {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    width: 100px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    width: 100%;
+    max-width: min(560px, 96vw);
+    min-height: calc(100vh + 56px);
+    min-height: calc(100svh + 56px);
+    padding-bottom: max(40px, env(safe-area-inset-bottom));
 }
 
-.polaroid {
-    background: white;
-    padding: 6px 6px 15px 6px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transform: rotate(-3deg);
-    transition: transform 0.3s ease;
+/* Empty vertical band: user scrolls a little before the letter + photos */
+.finale-scroll-spacer {
+    width: 100%;
+    min-height: clamp(100px, 24vh, 220px);
+    flex-shrink: 0;
+    pointer-events: none;
 }
-.polaroid:nth-child(even) {
-    transform: rotate(4deg);
+
+/* Letter block: message on top, three polaroids in a row below */
+.finale-letter-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: min(560px, 94vw);
+    position: relative;
 }
-.polaroid:hover {
-    transform: scale(1.1) rotate(0deg);
+
+/* Pull polaroids up so pins can “tack” them to the bottom of the letter */
+.finale-polaroid-stack {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(10px, 2.5vw, 18px);
+    margin-top: clamp(-40px, -8vw, -26px);
+    padding: 28px 4px 12px;
+    position: relative;
     z-index: 2;
+    width: 100%;
 }
 
-.polaroid-img {
+.finale-polaroid {
+    position: relative;
+    margin: 0;
+    background: #fff;
+    padding: 5px 5px 18px 5px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    width: clamp(76px, 19vw, 104px);
+    overflow: visible;
+}
+
+.finale-polaroid-frame {
     width: 100%;
     aspect-ratio: 1;
-    background-size: cover;
-    background-position: center;
+    overflow: hidden;
+    background: #e8dfd4;
 }
 
-.letter-content {
-    flex: 1;
-    position: relative;
-    padding-top: 10px;
+.finale-polaroid-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.paperclip {
+.finale-polaroid--1 {
+    transform: rotate(-4deg);
+}
+
+.finale-polaroid--2 {
+    transform: rotate(3deg);
+}
+
+.finale-polaroid--3 {
+    transform: rotate(-3deg);
+}
+
+/* Pushpin: head overlaps letter, needle goes into the polaroid */
+.finale-pin--photo {
     position: absolute;
-    top: -45px;
-    left: -15px;
-    font-size: 2rem;
-    transform: rotate(-15deg);
-    opacity: 0.7;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -62%);
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 28%, #ff9494, #e12d2d 42%, #8f1818 100%);
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.18);
+    z-index: 8;
+    pointer-events: none;
 }
 
-.handwritten-text {
+.finale-pin--photo::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 88%;
+    transform: translateX(-50%);
+    width: 2.5px;
+    height: 18px;
+    background: linear-gradient(180deg, #e8e8e8 0%, #9a9a9a 55%, #6a6a6a 100%);
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.finale-message {
+    width: 100%;
+    min-width: 0;
+    background: #fffef9;
+    padding: clamp(16px, 2.8vw, 24px) clamp(16px, 3vw, 28px) clamp(8px, 1.5vw, 14px);
+    filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.38));
+    border-radius: 4px;
+    border: 1px solid rgba(200, 180, 165, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    z-index: 1;
+    position: relative;
+}
+
+/* Postage-style perforated outline */
+.finale-message--stamp {
+    outline: 2px dashed rgba(150, 130, 115, 0.45);
+    outline-offset: 6px;
+}
+
+.finale-meta {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(1.15rem, 2.8vw + 0.4rem, 1.55rem);
+    color: #6b5b4f;
+    text-align: right;
+    line-height: 1.35;
+    margin-bottom: 10px;
+    opacity: 0.95;
+}
+
+.finale-meta-line {
+    display: block;
+}
+
+.finale-message-inner {
+    position: relative;
+    padding-top: 4px;
+    padding-bottom: clamp(28px, 5vw, 44px);
+}
+
+.finale-handwritten {
     font-family: 'Dancing Script', cursive;
-    font-size: 1.8rem;
-    line-height: 1.4;
+    font-size: clamp(1.15rem, 2.6vw + 0.55rem, 1.85rem);
+    line-height: 1.45;
     color: #2c241b;
 }
 
-@media (max-width: 600px) {
-    #letter-card {
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
+.finale-mini-stamp {
+    position: absolute;
+    bottom: 14px;
+    right: 12px;
+    width: 36px;
+    height: 42px;
+    border: 2px dashed rgba(120, 100, 90, 0.35);
+    border-radius: 2px;
+    background: linear-gradient(160deg, rgba(255, 250, 245, 0.95), rgba(235, 220, 210, 0.5));
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+@media (max-width: 720px) {
+    .finale-scroll-spacer {
+        min-height: clamp(88px, 22vh, 200px);
     }
-    .polaroid-column {
-        flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
+
+    .finale-polaroid {
+        width: clamp(68px, 24vw, 90px);
     }
-    .polaroid {
-        width: 30%;
+
+    .finale-message {
+        max-width: min(420px, 100%);
     }
+}
+
+.finale-bouquet-col {
+    flex: 0 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 4px;
+}
+
+.finale-bouquet-img {
+    width: auto;
+    height: auto;
+    max-width: min(78vw, 360px);
+    max-height: min(38vh, 300px);
+    object-fit: contain;
+    filter: drop-shadow(0 12px 36px rgba(0, 0, 0, 0.45));
+    position: relative;
+    z-index: 2;
+}
+
+.finale-sparkles {
+    position: absolute;
+    inset: -8% -12% -5% -12%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.finale-spark {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.2) 70%, transparent 100%);
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.55);
+    opacity: 0;
+    transform: scale(0.4);
+}
+
+#letter-card {
+    display: none !important;
 }

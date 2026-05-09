@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Add Dancing Script for the letter -->
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Great+Vibes&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     
     <!-- GSAP for animations -->
@@ -27,21 +27,62 @@
             <p class="tap-text">Tap to open</p>
         </div>
 
-        <!-- The letter card reveal -->
-        <div id="letter-card" class="hidden">
-            <div class="polaroid-column">
-                <!-- Using placeholder images for polaroids -->
-                <div class="polaroid"><div class="polaroid-img" style="background-color: #e0d5c1;"></div></div>
-                <div class="polaroid"><div class="polaroid-img" style="background-color: #d1bda1;"></div></div>
-                <div class="polaroid"><div class="polaroid-img" style="background-color: #c2a886;"></div></div>
-            </div>
-            <div class="letter-content">
-                <div class="paperclip">📎</div>
-                <p class="handwritten-text">
-                    My Dearest,<br><br>
-                    Just as these flowers bloom, my thoughts always turn to you. I hope this digital garden brings a smile to your face today and always.<br><br>
-                    With love,
-                </p>
+        <!-- Legacy letter (replaced by finale scene); kept for structure if needed -->
+        <div id="letter-card" hidden aria-hidden="true"></div>
+
+        <!-- After flower animation: dim overlay + bouquet + message (stamp card) -->
+        <div id="finale-root" class="finale-root" aria-hidden="true">
+            <div id="finale-overlay" class="finale-overlay"></div>
+            <div id="finale-scene" class="finale-scene">
+                <div class="finale-layout">
+                    <div class="finale-bouquet-col">
+                        <div id="finale-sparkles" class="finale-sparkles" aria-hidden="true"></div>
+                        <img
+                            src="assets/pink_boquet.png"
+                            alt=""
+                            class="finale-bouquet-img"
+                            width="360"
+                            height="420"
+                        />
+                    </div>
+                    <div class="finale-scroll-spacer" aria-hidden="true"></div>
+                    <div class="finale-letter-block">
+                        <div class="finale-message finale-message--stamp" id="finale-message">
+                            <p class="finale-meta">
+                                <span class="finale-meta-line">To: Lina</span>
+                                <span class="finale-meta-line">From: Me</span>
+                            </p>
+                            <div class="finale-message-inner">
+                                <p class="finale-handwritten">
+                                    My Dearest,<br><br>
+                                    Just as these flowers bloom, my thoughts always turn to you. I hope this digital garden brings a smile to your face today and always.<br><br>
+                                    With love,
+                                </p>
+                            </div>
+                            <div class="finale-mini-stamp" aria-hidden="true"></div>
+                        </div>
+                        <aside class="finale-polaroid-stack" aria-label="Photos">
+                            <figure class="finale-polaroid finale-polaroid--1">
+                                <span class="finale-pin finale-pin--photo" aria-hidden="true"></span>
+                                <div class="finale-polaroid-frame">
+                                    <img src="assets/finale-photo-1.jpeg" alt="" width="120" height="120" loading="lazy" />
+                                </div>
+                            </figure>
+                            <figure class="finale-polaroid finale-polaroid--2">
+                                <span class="finale-pin finale-pin--photo" aria-hidden="true"></span>
+                                <div class="finale-polaroid-frame">
+                                    <img src="assets/finale-photo-2.jpeg" alt="" width="120" height="120" loading="lazy" />
+                                </div>
+                            </figure>
+                            <figure class="finale-polaroid finale-polaroid--3">
+                                <span class="finale-pin finale-pin--photo" aria-hidden="true"></span>
+                                <div class="finale-polaroid-frame">
+                                    <img src="assets/finale-photo-3.jpeg" alt="" width="120" height="120" loading="lazy" />
+                                </div>
+                            </figure>
+                        </aside>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
