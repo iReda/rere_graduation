@@ -2,22 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const envelope = document.getElementById('envelope');
     const flowerContainer = document.getElementById('flower-container');
 
-    // Array of multiple flower assets
+    /** WebP sprites (see scripts/optimize_images.py) — tiny vs multi‑MB PNGs */
     const flowerAssets = [
-        'assets/blue_flower_1.png',
-        'assets/pink_flower_1.png',
-        'assets/pink_flower_2.png',
-        'assets/pink_flower_3.png',
-        'assets/pink_flower_4.png',
-        'assets/pink_flower_5.png',
-        'assets/purple_flower_1.png',
-        'assets/purple_flower_2.png',
-        'assets/yellow_flower_1.png',
-        'assets/yellow_flower_2.png',
-        'assets/yellow_flower_3.png',
+        'assets/webp/blue_flower_1.webp',
+        'assets/webp/pink_flower_1.webp',
+        'assets/webp/pink_flower_2.webp',
+        'assets/webp/pink_flower_3.webp',
+        'assets/webp/pink_flower_4.webp',
+        'assets/webp/pink_flower_5.webp',
+        'assets/webp/purple_flower_1.webp',
+        'assets/webp/purple_flower_2.webp',
+        'assets/webp/yellow_flower_1.webp',
+        'assets/webp/yellow_flower_2.webp',
+        'assets/webp/yellow_flower_3.webp',
     ];
-    const numFlowers = 500;
-
     let isOpened = false;
     let finaleMode = false;
 
@@ -52,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Generate and Animate Flowers
         const { innerWidth: width, innerHeight: height } = window;
+        const numFlowers = Math.min(220, Math.max(140, Math.floor((width * height) / 22000)));
         const centerX = width / 2;
         const centerY = height / 2;
 
@@ -146,6 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = flowerAssets[Math.floor(Math.random() * flowerAssets.length)];
             img.className = 'flower-particle';
+            img.width = 80;
+            img.height = 80;
+            img.decoding = 'async';
+            img.loading = 'lazy';
             flowerContainer.appendChild(img);
             
             let isHeart = i < numHeartFlowers;
