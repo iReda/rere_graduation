@@ -48,25 +48,35 @@ document.addEventListener('DOMContentLoaded', () => {
             onComplete: () => envelope.style.display = 'none'
         });
 
-        // 2. Generate and Animate Flowers
-        const { innerWidth: width, innerHeight: height } = window;
-        const numFlowers = 200;
+        // 2. Generate and Animate Flowers (use visual viewport on mobile when available)
+        const vv = window.visualViewport;
+        const width = Math.max(280, vv?.width ?? window.innerWidth);
+        const height = Math.max(400, vv?.height ?? window.innerHeight);
+        const minSide = Math.min(width, height);
+        const numFlowers = minSide < 420 ? 160 : 200;
         const centerX = width / 2;
         const centerY = height / 2;
 
         const flowerData = [];
         const scatterPositions = [];
-        
-        const flowerSize = 80; // from CSS
-        const overlapRatio = 0.15;
-        const minDistance = flowerSize * (1 - overlapRatio); // ~68px distance between centers for exactly 15% overlap
 
-        // Generate Heart Points for stages 1 to 5
+        const flowerSize = minSide < 420 ? 64 : 80;
+        const halfFlower = flowerSize / 2;
+        const overlapRatio = 0.15;
+        const minDistance = flowerSize * (1 - overlapRatio);
+
+        const edgeMargin = Math.max(20, Math.round(minSide * 0.06));
+        const maxHeartRadius = minSide / 2 - edgeMargin - halfFlower;
+        const numHeartStages = 5;
+        const heartParamMax = 17;
+        const stepFromDensity = minDistance / 15;
+        const stepFromViewport = maxHeartRadius / (heartParamMax * numHeartStages * 1.08);
+        const heartScaleStep = Math.max(0.65, Math.min(stepFromDensity, stepFromViewport));
+
         const heartPoints = [];
-        let heartScaleStep = minDistance / 15; // 15 is roughly the max value of the heart equation
-        
-        for (let s = 1; s <= 5; s++) {
-            let stageScale = s * heartScaleStep;
+
+        for (let s = 1; s <= numHeartStages; s++) {
+            const stageScale = s * heartScaleStep;
             let lastX, lastY;
             let dist = 0;
             // Trace the heart perimeter
@@ -75,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 let hX = 16 * Math.pow(Math.sin(t), 3);
                 let hY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
                 
-                let px = centerX + hX * stageScale - 40;
-                let py = centerY + hY * stageScale - 40;
+                let px = centerX + hX * stageScale - halfFlower;
+                let py = centerY + hY * stageScale - halfFlower;
                 // tiny randomness
                 px += random(-3, 3);
                 py += random(-3, 3);
@@ -107,8 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let finalX, finalY;
             
             while (!foundSpot && attempts < 150) {
-                let testX = random(40, width - 40);
-                let testY = random(40, height - 40);
+                const m = edgeMargin + halfFlower;
+                const testX = random(m, width - m);
+                const testY = random(m, height - m);
                 
                 let tooClose = false;
                 for (let pos of scatterPositions) {
@@ -121,8 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (!tooClose) {
-                    finalX = testX - 40;
-                    finalY = testY - 40;
+                    finalX = testX - halfFlower;
+                    finalY = testY - halfFlower;
                     scatterPositions.push({ x: testX, y: testY, finalX, finalY });
                     foundSpot = true;
                 }
@@ -130,10 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (!foundSpot) {
-                // Fallback if screen is full
-                finalX = random(0, width) - 40;
-                finalY = random(0, height) - 40;
-                scatterPositions.push({ x: finalX + 40, y: finalY + 40, finalX, finalY });
+                finalX = random(halfFlower, width - halfFlower) - halfFlower;
+                finalY = random(halfFlower, height - halfFlower) - halfFlower;
+                scatterPositions.push({
+                    x: finalX + halfFlower,
+                    y: finalY + halfFlower,
+                    finalX,
+                    finalY,
+                });
             }
         }
 
@@ -145,8 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = flowerAssets[Math.floor(Math.random() * flowerAssets.length)];
             img.className = 'flower-particle';
-            img.width = 80;
-            img.height = 80;
+            img.width = flowerSize;
+            img.height = flowerSize;
+            img.style.width = `${flowerSize}px`;
+            img.style.height = `${flowerSize}px`;
             img.decoding = 'async';
             img.loading = 'lazy';
             flowerContainer.appendChild(img);
@@ -179,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Delay when the heart shatters and remaining flowers erupt
-        // Delay when the heart shatters and remaining flowers erupt
         const heartBreakDelay = 4.2; 
 
         // GSAP Wave Explosion & Shatter Animation
@@ -188,8 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Phase 1: Form the Heart
                 gsap.fromTo(data.element,
                     {
-                        x: centerX - 40,
-                        y: centerY - 40,
+                        x: centerX - halfFlower,
+                        y: centerY - halfFlower,
                         scale: 0,
                         opacity: 0,
                         rotation: random(-180, 180)
@@ -256,8 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Non-heart flowers: Wait in center, then erupt during Phase 2
                 gsap.fromTo(data.element,
                     {
-                        x: centerX - 40,
-                        y: centerY - 40,
+                        x: centerX - halfFlower,
+                        y: centerY - halfFlower,
                         scale: 0,
                         opacity: 0,
                         rotation: random(-180, 180)
@@ -293,8 +309,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        const scatterTailSec = (maxScatterStage - 5) * 0.2;
+        const pauseAfterMotionSec = minSide < 480 ? 2.6 : 2.0;
         const delayForFinale =
-            heartBreakDelay + (maxScatterStage - 5) * 0.2 + 1.35;
+            heartBreakDelay + scatterTailSec + 1.35 + pauseAfterMotionSec;
 
         const finaleRoot = document.getElementById('finale-root');
 

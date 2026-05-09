@@ -66,8 +66,8 @@ body, html {
 
 .flower-particle {
     position: absolute;
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
     filter: drop-shadow(0px 8px 12px rgba(0,0,0,0.15));
     pointer-events: none;
