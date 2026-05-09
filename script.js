@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. Generate and Animate Flowers
         const { innerWidth: width, innerHeight: height } = window;
-        const numFlowers = Math.min(220, Math.max(140, Math.floor((width * height) / 22000)));
+        const numFlowers = 250;
         const centerX = width / 2;
         const centerY = height / 2;
 
